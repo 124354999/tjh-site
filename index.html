@@ -1,0 +1,409 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>懒人TJH · 个人主页</title>
+<style>
+	:root{
+		--bg:#06070d;
+		--panel:rgba(10,12,22,.82);
+		--line:rgba(177,74,255,.26);
+		--yellow:#ff2a55;
+		--cyan:#b14aff;
+		--red:#8b1a3d;
+		--text:#e8eef7;
+		--dim:#9fb0c4;
+	}
+	*{box-sizing:border-box}
+	html,body{margin:0;padding:0}
+	body{
+		font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+		color:var(--text);
+		background:url('bg.jpg') center/cover no-repeat fixed, var(--bg);
+		line-height:1.85;
+		-webkit-font-smoothing:antialiased;
+	}
+	/* 顶部到现在的渐变遮罩：让内容区更实，背景还看得见 */
+	body::before{
+		content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+		background:
+			linear-gradient(180deg, rgba(6,7,13,.55) 0%, rgba(6,7,13,.88) 32%, rgba(6,7,13,.96) 100%);
+	}
+	.wrap{position:relative; z-index:1}
+
+	/* ── 顶部固定导航 ── */
+	header{
+		position:sticky; top:0; z-index:50;
+		display:flex; align-items:center; justify-content:space-between;
+		padding:14px 28px;
+		background:rgba(6,8,14,.72);
+		backdrop-filter:blur(10px);
+		border-bottom:1px solid var(--line);
+	}
+	.logo{font-weight:700; letter-spacing:.18em; font-size:.9em; color:var(--yellow); text-transform:uppercase}
+	header nav a{
+		color:var(--dim); text-decoration:none; margin-left:22px; font-size:.88em; letter-spacing:.1em;
+		transition:color .2s;
+	}
+	header nav a:hover{color:var(--cyan)}
+
+	/* ── 首屏 ── */
+	.hero{
+		min-height:88vh; display:flex; flex-direction:column; justify-content:center;
+		padding:0 8vw; max-width:1100px; margin:0 auto;
+	}
+	.tag{
+		display:inline-block; font-size:.72em; letter-spacing:.3em; text-transform:uppercase;
+		color:var(--yellow); border-left:3px solid var(--yellow); padding-left:12px; margin-bottom:18px;
+	}
+	.hero h1{
+		font-size:clamp(2.2rem,6vw,4.2rem); margin:0 0 18px; letter-spacing:.04em; line-height:1.15;
+		text-shadow:0 0 24px rgba(177,74,255,.42), 0 0 60px rgba(255,42,85,.20);
+	}
+	.hero p{font-size:1.05rem; color:var(--dim); max-width:640px; margin:0 0 30px}
+	.btns{display:flex; gap:14px; flex-wrap:wrap}
+	.btn{
+		display:inline-block; padding:12px 26px; border:1px solid var(--cyan); border-radius:2px;
+		color:var(--cyan); text-decoration:none; font-size:.9em; letter-spacing:.14em;
+		transition:all .22s; background:rgba(177,74,255,.05);
+	}
+	.btn:hover{background:var(--cyan); color:#04060c; box-shadow:0 0 24px rgba(177,74,255,.55)}
+	.btn.solid{background:var(--yellow); border-color:var(--yellow); color:#0a0a0a}
+	.btn.solid:hover{box-shadow:0 0 24px rgba(255,42,85,.6)}
+
+	/* ── 通用区块 ── */
+	section.block{max-width:1100px; margin:0 auto; padding:84px 8vw}
+	section.block h2{
+		font-size:clamp(1.5rem,3vw,2.1rem); margin:0 0 8px; letter-spacing:.04em;
+	}
+	section.block .lead{color:var(--dim); margin:0 0 36px; max-width:720px}
+
+	/* 卡片网格 */
+	.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px}
+	.card{
+		background:var(--panel); border:1px solid var(--line); border-radius:3px; padding:24px 22px;
+		transition:border-color .2s, transform .2s;
+	}
+	.card:hover{border-color:var(--cyan); transform:translateY(-3px)}
+	.card h3{margin:0 0 10px; font-size:1.02rem; letter-spacing:.02em}
+	.card p{margin:0; color:var(--dim); font-size:.92rem; line-height:1.8}
+	.card .num{font-size:.72em; letter-spacing:.24em; color:var(--cyan); display:block; margin-bottom:10px}
+
+	/* 时间线作品 */
+	.work{
+		display:grid; grid-template-columns:120px 1fr; gap:24px;
+		padding:22px 0; border-top:1px solid rgba(255,255,255,.08);
+	}
+	.work:last-child{border-bottom:1px solid rgba(255,255,255,.08)}
+	.work .year{color:var(--cyan); font-size:.82em; letter-spacing:.18em; padding-top:5px}
+	.work h3{margin:0 0 6px; font-size:1.05rem}
+	.work p{margin:0; color:var(--dim); font-size:.93rem}
+	.work a{color:var(--yellow); text-decoration:none; border-bottom:1px dashed rgba(255,42,85,.5)}
+	@media(max-width:640px){ .work{grid-template-columns:1fr; gap:6px} }
+
+	/* 联系方式 */
+	.contact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px}
+	.contact-item{background:var(--panel); border:1px solid var(--line); padding:20px 22px; border-radius:3px}
+	.contact-item h4{margin:0 0 6px; font-size:.72em; letter-spacing:.24em; color:var(--dim); text-transform:uppercase; font-weight:500}
+	.contact-item a, .contact-item span{color:var(--text); text-decoration:none; font-size:.98em}
+	.contact-item a:hover{color:var(--cyan)}
+
+
+	/* 游戏区：单独用合成图做背景 */
+	#now{
+		position:relative;
+		background:linear-gradient(180deg, rgba(6,7,13,.58) 0%, rgba(6,7,13,.56) 40%, rgba(6,7,13,.76) 100%),
+		           url('img/games-bg.jpg') center 30%/cover no-repeat;
+		border-top:1px solid var(--line);
+		border-bottom:1px solid var(--line);
+		max-width:none;
+		padding-left:0; padding-right:0;
+	}
+	#now .inner{max-width:1100px; margin:0 auto; padding:84px 8vw}
+	/* 页脚 */
+	footer{
+		border-top:1px solid var(--line); padding:28px 8vw; text-align:center;
+		color:var(--dim); font-size:.82em; letter-spacing:.06em;
+	}
+	footer a{color:var(--dim)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+	<header>
+		<div class="logo">TJH<span style="color:var(--cyan)">.DEV</span></div>
+		<nav>
+			<a href="#about">关于</a>
+			<a href="#skills">技能</a>
+			<a href="#gear">装备</a>
+			<a href="#works">作品</a>
+			<a href="#contact">联系</a>
+		</nav>
+	</header>
+
+	<!-- 首屏 -->
+	<section class="hero">
+		<span class="tag">Welcome to Night City</span>
+		<h1>懒人TJH</h1>
+		<p>
+			【计算机小白，番茄大佬】<br>
+			会装模组、会写点脚本、最近在折腾 AI 和桌面宠物。<br>
+			不怎么会写代码，但很会折腾。<br>
+			相信「能跑起来」比「写得优雅」重要。
+		</p>
+		<div class="btns">
+			<a href="#works" class="btn solid">看看作品</a>
+			<a href="#contact" class="btn">联系我</a>
+		</div>
+	</section>
+
+	<!-- 关于 -->
+	<section class="block" id="about">
+		<span class="tag">About</span>
+		<h2>关于我</h2>
+		<p class="lead">白天是学生，晚上是折腾党。喜欢把软件拆开看看里面是什么，装坏了就重装，重装完再拆。</p>
+		<p class="lead">这个站是我自己一点点拼出来的——没有用建站工具，HTML 和 CSS 都是手写的。
+		背景图是《赛博朋克：边缘行者》，配色是红配紫，都是为了看着顺眼。
+		做这个站的原因很简单：总得有个地方，把自己折腾过的东西摆出来。</p>
+		<div class="grid">
+			<div class="card">
+				<span class="num">01</span>
+				<h3>我现在在</h3>
+				<p>还在念书。日常三点一线：教室、宿舍、电脑前。大部分时间在电脑前。</p>
+			</div>
+			<div class="card">
+				<span class="num">02</span>
+				<h3>最近在折腾</h3>
+				<p>在折腾赛博朋克 2077 的模组环境，也在研究怎么让 AI 更像个人。闲下来的时候刷 B 站、打游戏。</p>
+			</div>
+			<div class="card">
+				<span class="num">03</span>
+				<h3>闲下来的时候</h3>
+				<p>看番、打游戏、听歌。偶尔剪点视频，剪得不好但自己看着开心。</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- 技能 -->
+	<section class="block" id="skills">
+		<span class="tag">Skills</span>
+		<h2>我能做什么</h2>
+		<p class="lead">谈不上专业，但想做的事基本都能自己搞出来。遇到不会的就现学，学不会就换个办法绕过去。</p>
+		<div class="grid">
+			<div class="card">
+				<h3>写代码</h3>
+				<p>看得懂 HTML / CSS / 一点 Python 和 JavaScript。写不了大型项目，但能把想法做成能跑的东西。</p>
+			</div>
+			<div class="card">
+				<h3>折腾系统</h3>
+				<p>装模组、配环境变量、处理依赖冲突、让老软件在新系统上跑起来。电脑出问题一般先自己查，最后一步才是重装。</p>
+			</div>
+			<div class="card">
+				<h3>做界面</h3>
+				<p>这个站就是例子。配色、排版、响应式，都是照着感觉一点点调的。</p>
+			</div>
+			<div class="card">
+				<h3>玩 AI</h3>
+				<p>跟各种模型打交道：调提示词、接 API、让机器人有记忆、有性格。
+				不训练模型，但很会用。</p>
+			</div>
+			<div class="card">
+				<h3>解决问题</h3>
+				<p>报错先看日志，缺依赖就补依赖，实在不行换个思路绕过去。
+				大部分时间不是写代码，是找问题出在哪。</p>
+			</div>
+			<div class="card">
+				<h3>搞自动化</h3>
+				<p>用脚本代替重复操作：批量改名、定时启动、自动抓数据、把一堆手动步骤写成双击就完事。</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- 装备 -->
+	<section class="block" id="gear">
+		<span class="tag">Gear</span>
+		<h2>常用的东西</h2>
+		<p class="lead">用什么工具，能看出一个人怎么干活。</p>
+		<div class="grid">
+			<div class="card">
+				<span class="num">HARDWARE</span>
+				<h3>电脑</h3>
+				<p>一台 Windows 笔记本，AMD 独显。跑得动赛博朋克，装得下一堆模组，
+				偶尔会因为驱动崩一次。</p>
+			</div>
+			<div class="card">
+				<span class="num">EDITOR</span>
+				<h3>写东西</h3>
+				<p>小改动用记事本，正经写用 VS Code 和 PyCharm。
+				这个站就是用记事本改出来的。</p>
+			</div>
+			<div class="card">
+				<span class="num">DAILY</span>
+				<h3>每天开着的</h3>
+				<p>QQ、B 站、Steam、GitHub Desktop。
+				浏览器常驻十几个标签页，从来不关。</p>
+			</div>
+			<div class="card">
+				<span class="num">SERVER</span>
+				<h3>折腾服务</h3>
+				<p>在自己电脑上跑过机器人、本地模型和各种后台服务。
+				把电脑当服务器用，是种乐趣。</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- 在玩在看 -->
+	<section class="block" id="now">
+		<span class="tag">Now Playing</span>
+		<h2>在玩</h2>
+		<p class="lead">都是射击和开放世界，闲下来就泡在里面。</p>
+		<div class="grid">
+			<div class="card">
+				<span class="num">TACTICAL · PC</span>
+				<h3>暗区突围：无限</h3>
+				<p>端游版，主玩这个。进图、搜物资、卡点、撤离，一整套流程下来心跳一直不慢。
+				装备带多了怕丢，带少了打不过，这个纠结才是最好玩的地方。
+				死一次掉一背包的感觉，别的游戏给不了。</p>
+			</div>
+			<div class="card">
+				<span class="num">TACTICAL · MOBILE</span>
+				<h3>暗区突围（手游）</h3>
+				<p>端游出门了就在手机上来一把。地图小、节奏快，蹲在角落听脚步的时间比开枪多。
+				手机上操作不如键鼠，但胜在随时随地能打。</p>
+			</div>
+			<div class="card">
+				<span class="num">RPG</span>
+				<h3>赛博朋克 2077</h3>
+				<p>装了 RED4ext、CET、ArchiveXL 一整套框架，正在往里加车辆和武器模组。
+				玩模组的时间比玩游戏长。</p>
+			</div>
+			<div class="card">
+				<span class="num">FPS</span>
+				<h3>CS2</h3>
+				<p>水平一般，图个乐。打得不好的时候就说自己在测试网络延迟。</p>
+			</div>
+			</div>
+	</section>
+
+	<!-- 作品 -->
+	<section class="block" id="works">
+		<span class="tag">Works</span>
+		<h2>做过的东西</h2>
+		<p class="lead">不多，但都是从零做起来的。</p>
+
+		<div class="work">
+			<div class="year">2026</div>
+			<div>
+				<h3>这个个人主页</h3>
+				<p>你正在看的这个页面。单文件手写 HTML，没有用任何建站工具和框架，
+				背景、配色、排版都是自己调的。<a href="index.html">就是它</a></p>
+			</div>
+		</div>
+		<div class="work">
+			<div class="year">2026</div>
+			<div>
+				<h3>赛博朋克 2077 模组环境</h3>
+				<p>把一套 2.5 版本的模组框架（RED4ext / CET / ArchiveXL / TweakXL / Codeware）
+				从零配到能用：解决版本冲突、依赖缺失、启动崩溃，最后整理成一份可复现的安装流程。</p>
+			</div>
+		</div>
+		<div class="work">
+			<div class="year">2026</div>
+			<div>
+				<h3>QQ 机器人</h3>
+				<p>一个跑在本机的聊天机器人：接了消息队列、长期记忆和一堆工具调用，
+				能聊天、能搜资料、能看图，会自己判断什么时候该说话。调它的过程比玩它更有意思。</p>
+			</div>
+		</div>
+		<div class="work">
+			<div class="year">2025</div>
+			<div>
+				<h3>【最后一个项目名】</h3>
+				<p>【一句话说清它是什么、解决了什么问题。】</p>
+			</div>
+		</div>
+	</section>
+
+
+	<!-- 联系 -->
+	<section class="block" id="contact">
+		<span class="tag">Contact</span>
+		<h2>找我</h2>
+		<p class="lead">有事直接加 QQ，或者在下面留言。</p>
+		<div class="contact-grid">
+			<div class="contact-item">
+				<h4>Email</h4>
+				<a href="mailto:458694802@qq.com">458694802@qq.com</a>
+			</div>
+			<div class="contact-item">
+				<h4>QQ</h4>
+				<span>3650994514</span>
+			</div>
+		</div>
+	</section>
+
+	<!-- 留言板 -->
+	<section class="block" id="guestbook">
+		<span class="tag">Guestbook</span>
+		<h2>留言板</h2>
+		<p class="lead">用 GitHub 账号登录就能留言，不用另外注册。没有账号的话，直接加 QQ 找我。</p>
+
+		<div id="giscus-wrap">
+			<div class="giscus"></div>
+			<div id="giscus-tip" style="display:none;background:var(--panel);border:1px dashed var(--line);
+				border-radius:3px;padding:22px 24px;color:var(--dim);font-size:.92em;line-height:1.9">
+				留言板还没接上。<br>
+				在 <b>giscus.app</b> 填好仓库、拿到 <code>data-repo-id</code> 和
+				<code>data-category-id</code>，把它们填进 <code>index.html</code> 就能用了。<br>
+				临时想联系我，直接加 QQ：<b>3650994514</b>
+			</div>
+		</div>
+	</section>
+
+	<footer>
+		© 2026 懒人TJH · 背景图来自《赛博朋克：边缘行者》
+	</footer>
+
+</div>
+
+	<!-- 留言板 Giscus（GitHub Discussions） -->
+	<script>
+	(function () {
+		var CFG = {
+			repo: '【你的用户名】/【仓库名】',
+			repoId: '【data-repo-id】',
+			category: 'General',
+			categoryId: '【data-category-id】'
+		};
+		var ready = CFG.repo && CFG.repoId && CFG.categoryId &&
+			!CFG.repo.includes('【') && !CFG.repoId.includes('【') && !CFG.categoryId.includes('【');
+		if (!ready) {
+			var tip = document.getElementById('giscus-tip');
+			if (tip) tip.style.display = 'block';
+			return;
+		}
+		var s = document.createElement('script');
+		s.src = 'https://giscus.app/client.js';
+		s.setAttribute('data-repo', CFG.repo);
+		s.setAttribute('data-repo-id', CFG.repoId);
+		s.setAttribute('data-category', CFG.category);
+		s.setAttribute('data-category-id', CFG.categoryId);
+		s.setAttribute('data-mapping', 'pathname');
+		s.setAttribute('data-strict', '0');
+		s.setAttribute('data-reactions-enabled', '1');
+		s.setAttribute('data-emit-metadata', '0');
+		s.setAttribute('data-input-position', 'top');
+		s.setAttribute('data-theme', 'dark_dimmed');
+		s.setAttribute('data-lang', 'zh-CN');
+		s.setAttribute('data-loading', 'lazy');
+		s.crossOrigin = 'anonymous';
+		s.async = true;
+		document.querySelector('.giscus').appendChild(s);
+	})();
+	</script>
+
+</body>
+</html>
