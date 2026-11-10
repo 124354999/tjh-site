@@ -121,6 +121,22 @@
 		padding-left:0; padding-right:0;
 	}
 	#now .inner{max-width:1100px; margin:0 auto; padding:84px 8vw}
+	/* 点赞 */
+	.like-row{display:flex; align-items:center; gap:14px; margin-top:26px; flex-wrap:wrap}
+	.like-btn{
+		display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+		background:rgba(255,42,85,.08); border:1px solid rgba(255,42,85,.45);
+		color:var(--text); font:inherit; font-size:.95em; letter-spacing:.06em;
+		padding:10px 20px; border-radius:999px; transition:all .22s;
+	}
+	.like-btn:hover{background:rgba(255,42,85,.18); border-color:var(--yellow); box-shadow:0 0 18px rgba(255,42,85,.35)}
+	.like-btn.liked{background:rgba(255,42,85,.22); border-color:var(--yellow); cursor:default}
+	.like-btn .ico{font-size:1.05em; transition:transform .25s}
+	.like-btn:hover .ico{transform:scale(1.18)}
+	.like-btn.liked .ico{transform:scale(1.1)}
+	.like-btn .num{font-variant-numeric:tabular-nums; min-width:1.4em; text-align:center; color:var(--yellow)}
+	.like-note{font-size:.82em; color:var(--dim); letter-spacing:.04em}
+
 	/* 页脚 */
 	footer{
 		border-top:1px solid var(--line); padding:28px 8vw; text-align:center;
@@ -157,6 +173,15 @@
 		<div class="btns">
 			<a href="#works" class="btn solid">看看作品</a>
 			<a href="#contact" class="btn">联系我</a>
+		</div>
+
+		<div class="like-row">
+			<button id="likeBtn" class="like-btn" type="button">
+				<span class="ico">👍</span>
+				<span>点赞</span>
+				<span class="num" id="likeCount">—</span>
+			</button>
+			<span class="like-note">点个赞，让我知道有人来过</span>
 		</div>
 	</section>
 
@@ -402,6 +427,48 @@
 		s.crossOrigin = 'anonymous';
 		s.async = true;
 		document.querySelector('.giscus').appendChild(s);
+	})();
+	</script>
+
+	<!-- 点赞计数器（abacus 免费接口） -->
+	<script>
+	(function () {
+		var NS = 'tjh-site', KEY = 'likes';
+		var GET = 'https://abacus.jasoncameron.dev/get/' + NS + '/' + KEY;
+		var HIT = 'https://abacus.jasoncameron.dev/hit/' + NS + '/' + KEY;
+		var btn = document.getElementById('likeBtn');
+		var num = document.getElementById('likeCount');
+		if (!btn) return;
+
+		function setCount(n) {
+			num.textContent = (typeof n === 'number' && n >= 0) ? n : '—';
+		}
+
+		// 读当前数
+		fetch(GET).then(function (r) { return r.json(); })
+			.then(function (d) { if (d && typeof d.value === 'number') setCount(d.value); })
+			.catch(function () { setCount(null); });
+
+		// 已经赞过就置灰
+		var liked = false;
+		try { liked = localStorage.getItem('liked-' + NS) === '1'; } catch (e) {}
+		if (liked) { btn.classList.add('liked'); btn.querySelector('span:nth-child(2)').textContent = '已赞'; }
+
+		btn.addEventListener('click', function () {
+			if (btn.classList.contains('liked')) return;
+			btn.disabled = true;
+			fetch(HIT).then(function (r) { return r.json(); })
+				.then(function (d) {
+					if (d && typeof d.value === 'number') setCount(d.value);
+					btn.classList.add('liked');
+					btn.querySelector('span:nth-child(2)').textContent = '已赞';
+					try { localStorage.setItem('liked-' + NS, '1'); } catch (e) {}
+				})
+				.catch(function () {
+					btn.classList.remove('liked');
+				})
+				.finally(function () { btn.disabled = false; });
+		});
 	})();
 	</script>
 
