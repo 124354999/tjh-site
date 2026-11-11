@@ -182,6 +182,23 @@
 	.gstats .v{font-size:1.05em; color:var(--text); font-variant-numeric:tabular-nums}
 	.gstats .v em{font-style:normal; color:var(--yellow)}
 
+	/* 群邀请 */
+	.group-invite{
+		display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+		margin-top:12px; padding:12px 16px; border:1px dashed rgba(255,42,85,.4);
+		border-radius:4px; background:rgba(255,42,85,.05);
+	}
+	.group-invite .gno{font-size:.95em; letter-spacing:.03em}
+	.group-invite .gno b{color:var(--yellow); font-variant-numeric:tabular-nums; letter-spacing:.08em}
+	.group-invite .gcopy{
+		background:rgba(255,42,85,.15); border:1px solid rgba(255,42,85,.45); color:var(--text);
+		font:inherit; font-size:.8em; padding:5px 14px; border-radius:999px; cursor:pointer;
+		transition:all .2s;
+	}
+	.group-invite .gcopy:hover{background:rgba(255,42,85,.3)}
+	.group-invite .ghow{font-size:.8em; color:var(--cyan); text-decoration:none}
+	.group-invite .ghow:hover{color:var(--yellow)}
+
 	/* 页脚 */
 	footer{
 		border-top:1px solid var(--line); padding:28px 8vw; text-align:center;
@@ -442,7 +459,13 @@
 			<div>
 				<h3>QQ 机器人</h3>
 				<p>一个跑在本机的聊天机器人：接了消息队列、长期记忆和一堆工具调用，
-				能聊天、能搜资料、能看图，会自己判断什么时候该说话。调它的过程比玩它更有意思。<a href="https://github.com/Derpyu520/qq-bridge" target="_blank" rel="noopener">基于 qq-bridge 改的 →</a></p>
+				能聊天、能搜资料、能看图，会自己判断什么时候该说话。调它的过程比玩它更有意思。</p>
+				<p style="margin-top:10px">想看她实际怎么说话，可以进这个群 —— 她在里面，随时可能冒出来：</p>
+				<div class="group-invite">
+					<span class="gno">QQ 群 <b>428553542</b></span>
+					<button class="gcopy" id="copyGroupBtn" type="button">复制群号</button>
+					<a class="ghow" href="https://qun.qq.com/search?keyword=428553542" target="_blank" rel="noopener">在 QQ 里搜 ↗</a>
+				</div>
 			</div>
 		</div>
 		<div class="work">
@@ -614,6 +637,30 @@
 		});
 		document.addEventListener('keydown', function (e) {
 			if (e.key === 'Escape') close();
+		});
+	})();
+	</script>
+
+	<script>
+	(function () {
+		var btn = document.getElementById('copyGroupBtn');
+		if (!btn) return;
+		btn.addEventListener('click', function () {
+			var no = '428553542';
+			var done = function () {
+				var old = btn.textContent;
+				btn.textContent = '已复制';
+				btn.disabled = true;
+				setTimeout(function () { btn.textContent = old; btn.disabled = false; }, 1600);
+			};
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(no).then(done).catch(function () { done(); });
+			} else {
+				var t = document.createElement('textarea');
+				t.value = no; document.body.appendChild(t); t.select();
+				try { document.execCommand('copy'); } catch (e) {}
+				document.body.removeChild(t); done();
+			}
 		});
 	})();
 	</script>
