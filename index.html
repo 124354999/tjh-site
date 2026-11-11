@@ -174,6 +174,14 @@
 	}
 	.gmodal-close:hover{color:var(--yellow)}
 
+	/* 战绩数据 */
+	.gstats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0 18px}
+	.gstats div{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+		border-radius:4px; padding:10px 12px}
+	.gstats .k{font-size:.68em; letter-spacing:.16em; color:var(--dim); display:block; margin-bottom:4px}
+	.gstats .v{font-size:1.05em; color:var(--text); font-variant-numeric:tabular-nums}
+	.gstats .v em{font-style:normal; color:var(--yellow)}
+
 	/* 页脚 */
 	footer{
 		border-top:1px solid var(--line); padding:28px 8vw; text-align:center;
@@ -330,12 +338,26 @@
 			
 				<div class="detail">
 					<span class="gtag">TACTICAL EXTRACTION · PC</span>
-					<div class="grow"><span class="gpill">平台：PC</span><span class="gpill">主要玩这个</span><span class="gpill">喜欢：卡点、撤离</span></div>
-					<p>端游是我花时间最多的。进图先听脚步，再决定走哪条路，一局下来脑子比手更累。
-					最爽的是残血撤离成功那一下，最气的是刚捡到好东西就被人蹲了。
-					装备带多了怕丢、带少了打不过，这个纠结就是它的乐趣。</p>
-				</div>
-			</div>
+					<div class="grow">
+						<span class="gpill">昵称：罕见乌鸦</span>
+						<span class="gpill">25 级</span>
+						<span class="gpill">专家 III</span>
+					</div>
+					<div class="gstats">
+						<div><span class="k">战局总数</span><span class="v">74</span></div>
+						<div><span class="k">撤离率</span><span class="v"><em>56.8%</em></span></div>
+						<div><span class="k">游戏时长</span><span class="v">11.5 h</span></div>
+						<div><span class="k">累计淘汰</span><span class="v">475</span></div>
+						<div><span class="k">击死比</span><span class="v"><em>14.94</em></span></div>
+						<div><span class="k">场均伤害</span><span class="v">800</span></div>
+						<div><span class="k">仓库总价值</span><span class="v">10 M</span></div>
+						<div><span class="k">累计净赚</span><span class="v">33.9 M</span></div>
+						<div><span class="k">平均行动</span><span class="v">09:21</span></div>
+					</div>
+					<p>端游是我花时间最多的。进图先听脚步，再决定走哪条路。
+					赛季最高和历史最高都停在专家 III，卡在这儿一段时间了。
+					最爽的是残血撤离成功那一下，最气的是刚捡到好东西就被人蹲了。</p>
+				</div></div>
 			<div class="card">
 				<span class="num">TACTICAL · MOBILE</span>
 				<h3>暗区突围（手游）</h3>
