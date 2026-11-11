@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>赛博朋克 2077 模组安装流程 · 懒人TJH</title>
+<style>
+	:root{
+		--bg:#06070d; --panel:#0d1120; --text:#e8ecf4; --dim:#8b93a7;
+		--yellow:#ff2a55; --cyan:#b14aff; --red:#8b1a3d; --line:rgba(177,74,255,.26);
+	}
+	*{box-sizing:border-box}
+	body{
+		margin:0; background:var(--bg); color:var(--text);
+		font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+		line-height:1.9; font-size:16px;
+	}
+	.wrap{max-width:760px; margin:0 auto; padding:64px 24px 96px}
+	.top{display:flex; justify-content:space-between; align-items:center; margin-bottom:48px; font-size:.86em}
+	.top a{color:var(--cyan); text-decoration:none}
+	.tag{font-size:.72em; letter-spacing:.3em; color:var(--yellow); display:block; margin-bottom:14px}
+	h1{font-size:2rem; line-height:1.35; margin:0 0 18px; letter-spacing:.01em}
+	.lead{color:var(--dim); font-size:.95em; margin:0 0 40px}
+	h2{font-size:1.15rem; margin:44px 0 14px; padding-left:12px; border-left:3px solid var(--yellow)}
+	h3{font-size:1rem; margin:26px 0 8px; color:var(--cyan)}
+	p{margin:0 0 14px}
+	ul,ol{margin:0 0 16px; padding-left:22px}
+	li{margin-bottom:8px}
+	code{background:rgba(255,255,255,.07); padding:1px 6px; border-radius:3px; font-size:.88em}
+	pre{background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:14px 16px;
+		overflow-x:auto; font-size:.84em; line-height:1.7}
+	pre code{background:none; padding:0}
+	.note{background:rgba(177,74,255,.07); border-left:3px solid var(--cyan);
+		padding:12px 16px; margin:18px 0; font-size:.9em; color:#c8d2e0}
+	table{width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:.88em}
+	th,td{text-align:left; padding:9px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
+	th{color:var(--dim); font-weight:500; font-size:.92em}
+	.foot{margin-top:64px; padding-top:20px; border-top:1px solid rgba(255,255,255,.08);
+		color:var(--dim); font-size:.82em}
+</style>
+</head>
+<body>
+<div class="wrap">
+	<div class="top">
+		<a href="index.html">← 回主页</a>
+		<span style="color:var(--dim)">2026 · 实操笔记</span>
+	</div>
+
+	<span class="tag">CYBERPUNK 2077 · MODDING</span>
+	<h1>把模组装进去不崩<br>——一份能照着做的顺序</h1>
+	<p class="lead">不是为了教谁，是给自己记一遍：这套东西每次重装都要重新捋，写下来省事。</p>
+
+	<h2>一、先分清三类文件</h2>
+	<p>下回来的模组，看着五花八门，其实只有三种东西：</p>
+	<table>
+		<tr><th>类型</th><th>长什么样</th><th>放哪</th></tr>
+		<tr><td>资源存档</td><td><code>.archive</code> / <code>.archive.xl</code></td><td><code>archive\pc\mod\</code></td></tr>
+		<tr><td>脚本</td><td><code>.reds</code></td><td><code>r6\scripts\</code></td></tr>
+		<tr><td>插件 / 配置</td><td><code>.dll</code>、<code>.toml</code>、<code>.ini</code></td><td>看压缩包里的目录结构，原样复制</td></tr>
+	</table>
+	<p>判断方法很简单：<b>解压后看它有没有自带 <code>archive</code>、<code>r6</code>、<code>bin</code> 这些目录。</b>有就整个目录盖进游戏根目录，没有就按上表自己放。</p>
+
+	<h2>二、前置框架，顺序不能乱</h2>
+	<p>大部分模组都依赖框架。我用的这套，按依赖顺序装：</p>
+	<ol>
+		<li><b>RED4ext</b> —— 最底层，负责加载其他插件</li>
+		<li><b>CET</b>（Cyber Engine Tweaks）—— 控制台和界面</li>
+		<li><b>redscript</b> —— 红色脚本编译器</li>
+		<li><b>ArchiveXL</b> —— 扩展的资源加载</li>
+		<li><b>TweakXL</b> —— 参数覆盖</li>
+		<li><b>Codeware</b> —— 很多模组的公共库</li>
+		<li><b>Mod Settings</b> —— 模组设置面板</li>
+	</ol>
+	<div class="note">
+		游戏版本一变，框架全部要跟着换。2.0 时代的模组直接丢进 2.5，最常见的结果就是开游戏闪退。
+		装之前先确认模组页面上写的支持版本。
+	</div>
+
+	<h2>三、我踩过的坑</h2>
+
+	<h3>1. 启动器崩在显卡驱动里</h3>
+	<p><code>REDlauncher.exe</code> 在 AMD 驱动里报 <code>c0000005</code>，双击进不去游戏。绕过方法是直接从 Steam 启动，或者给快捷方式加参数：</p>
+	<pre><code>Cyberpunk2077.exe --launcher-skip</code></pre>
+
+	<h3>2. 开了两个游戏实例</h3>
+	<p>先点 Steam 的启动，又直接双击了 exe，结果 RED4ext 报日志文件被占用（permission denied）。先把所有游戏进程结束，再启动一次就行。</p>
+
+	<h3>3. 语言变成英文</h3>
+	<p>直接跑 exe 会丢掉 Steam 的语言参数。用 Steam 启动，或者在启动参数里补上：</p>
+	<pre><code>--launcher-skip -language=schinese</code></pre>
+
+	<h3>4. 老模组集体不兼容</h3>
+	<p>换大版本之后，先只装框架，进游戏确认能进，再一个一个加。全装完再排查，根本不知道是谁的问题。</p>
+
+	<h2>四、装之前先备份</h2>
+	<p>两件事分开做：</p>
+	<ul>
+		<li><b>存档</b>：<code>%USERPROFILE%\Saved Games\CD Projekt Red\Cyberpunk 2077</code></li>
+		<li><b>模组目录</b>：<code>archive\pc\mod</code>、<code>r6\scripts</code>、<code>bin\x64\plugins</code></li>
+	</ul>
+	<p>出问题就整个目录换回去，比一个个删快得多。</p>
+
+	<h2>五、用脚本批量装</h2>
+	<p>一个个拖太慢，我写了个 PowerShell 脚本，把压缩包全丢进一个文件夹，它自己解压、识别目录、复制到位、记日志：</p>
+	<pre><code>.\install-mod.cmd          # 扫描并安装
+.\install-mod.cmd -Test    # 只看会复制什么，不动手</code></pre>
+	<p>脚本核心就三件事：解压到临时目录 → 找 <code>archive</code> / <code>r6</code> / <code>bin</code> 这些顶层目录 → <code>robocopy</code> 覆盖过去。日志写在单独的目录里，出问题能倒查。</p>
+
+	<div class="note">
+		这套流程的前提是「一次只改一件事」。同时装五个模组再排查，等于给自己加难度。
+	</div>
+
+	<div class="foot">
+		<a href="index.html" style="color:var(--cyan); text-decoration:none">← 回主页</a>
+		&nbsp;·&nbsp; 懒人TJH · 2026
+	</div>
+</div>
+</body>
+</html>
