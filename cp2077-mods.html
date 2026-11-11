@@ -37,6 +37,8 @@
 	th{color:var(--dim); font-weight:500; font-size:.92em}
 	.foot{margin-top:64px; padding-top:20px; border-top:1px solid rgba(255,255,255,.08);
 		color:var(--dim); font-size:.82em}
+	a[download]{color:var(--cyan); text-decoration:none; border-bottom:1px dashed rgba(177,74,255,.5)}
+	a[download]:hover{color:var(--yellow); border-bottom-color:var(--yellow)}
 </style>
 </head>
 <body>
@@ -108,6 +110,98 @@
 
 	<div class="note">
 		这套流程的前提是「一次只改一件事」。同时装五个模组再排查，等于给自己加难度。
+	</div>
+
+
+	<h2>六、目录长什么样</h2>
+	<p>装好框架之后，游戏根目录里和模组有关的部分是这样：</p>
+	<pre><code>Cyberpunk 2077\
+├─ archive\pc\mod\           ← 所有 .archive / .archive.xl 放这儿
+├─ r6\scripts\               ← .reds 脚本
+├─ r6\tweaks\                ← .toml 参数覆盖
+├─ bin\x64\plugins\          ← RED4ext 插件（.dll）
+│  └─ cyber_engine_tweaks\   ← CET 本体 + mods 子目录
+│     ├─ bindings.json       ← 控制台热键
+│     └─ mods\               ← CET 模组（Lua）
+└─ red4ext\plugins\          ← RED4ext 扩展插件</code></pre>
+	<p>想知道某个模组到底装没装上，看这三个地方就行：<code>archive\pc\mod</code> 有没有它的 <code>.archive</code>、<code>r6\scripts</code> 有没有 <code>.reds</code>、<code>bin\x64\plugins</code> 有没有对应 dll。</p>
+
+	<h2>七、报错对照表</h2>
+	<p>这几个是我真遇到过的，照着查能省不少时间：</p>
+	<table>
+		<tr><th>现象</th><th>原因</th><th>怎么办</th></tr>
+		<tr>
+			<td>启动器闪退，事件查看器里是 <code>atio6axx.dll</code> / <code>c0000005</code></td>
+			<td>AMD 驱动和 REDlauncher 冲突</td>
+			<td>加 <code>--launcher-skip</code> 直接从游戏本体启动</td>
+		</tr>
+		<tr>
+			<td><code>Unable to rotate the log file ... permission denied</code></td>
+			<td>开了两个游戏实例，RED4ext 抢日志文件</td>
+			<td>任务管理器结束所有游戏进程，再启动一次</td>
+		</tr>
+		<tr>
+			<td>界面全变英文</td>
+			<td>直接跑 exe 丢了 Steam 的语言参数</td>
+			<td>补 <code>-language=schinese</code>，或用 Steam 启动</td>
+		</tr>
+		<tr>
+			<td>进游戏就崩，没有任何报错</td>
+			<td>模组和当前版本不兼容（最常见）</td>
+			<td>先把 <code>archive\pc\mod</code> 里的东西全移走，只留框架，确认能进再逐个加回</td>
+		</tr>
+		<tr>
+			<td>CET 控制台按 <code>~</code> 打不开</td>
+			<td><code>bindings.json</code> 里的热键值失效</td>
+			<td>把 <code>cet.overlay_key</code> 改成一个有效的键码（比如 <code>192</code> 是反引号）</td>
+		</tr>
+	</table>
+
+	<h2>八、脚本下载</h2>
+	<p>这套流程我写成了脚本，省得一个个拖文件。把压缩包丢进一个文件夹，双击运行即可：</p>
+	<ul>
+		<li><a href="downloads/install-mod.cmd" download>install-mod.cmd</a> —— 双击入口</li>
+		<li><a href="downloads/install-mod.ps1" download>install-mod.ps1</a> —— 实际干活的部分</li>
+	</ul>
+	<p>它做的事：解压到临时目录 → 识别 <code>archive</code> / <code>r6</code> / <code>bin</code> / <code>red4ext</code> 这些顶层目录 → 复制到游戏根目录 → 备份被覆盖的同名文件 → 写日志。</p>
+	<p>核心逻辑就开头这些：</p>
+	<pre><code>﻿# 赛博朋克 2077 模组一键安装脚本
+# 用法：把从 Nexus 下载的 zip 丢进 D:\CP2077_ModDrop\，然后双击「装mod.cmd」
+# 说明：脚本会识别包里的目录结构，把文件放到游戏对应位置；放之前备份同名旧文件。
+
+$ErrorActionPreference = 'Stop'
+$TestMode = $args -contains '-Test'
+$GameDir = "D:\Program Files (x86)\Steam\steamapps\common\Cyberpunk 2077"
+$DropDir = "D:\CP2077_ModDrop"
+$LogRoot = "D:\CP2077_ModLog"
+$Stamp = Get-Date -Format "yyyyMMdd_HHmmss"
+
+function Say($msg, $color = 'Gray') { Write-Host $msg -ForegroundColor $color }
+
+Say "==============================================" 'Cyan'
+Say "  赛博朋克 2077 · 模组安装" 'Cyan'
+Say "==============================================" 'Cyan'
+
+if (-not (Test-Path $GameDir)) { Say "找不到游戏目录：$GameDir" 'Red'; exit 1 }
+if (-not (Test-Path $DropDir)) { New-Item -ItemType Directory -Path $DropDir -Force | Out-Null; Say "已创建投放目录：$DropDir" 'Yellow' }
+$LogDir = Join-Path $LogRoot $Stamp
+New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
+
+$zips = @(Get-ChildItem $DropDir -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in @('.zip', '.7z') })
+if ($zips.Count -eq 0) {
+    Say "投放目录里没有 zip：$DropDir" 'Yellow'
+    Say "把下载的 mod 压缩包放进去，再运行一次。" 'Yellow'
+    if (-not $TestMode) { Read-Host "按回车关闭" }
+    exit 0
+}
+
+Say "发现 $($zips.Count) 个压缩包" 'Green'
+$sevenZip = @("C:\Program Files\7-Zip\7z.exe", "C:\Program Files (x86)\7-Zip\7z.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+function Expand-Package($file, $dest) {</code></pre>
+	<div class="note">
+		脚本里的游戏路径是写死的（<code>D:\Program Files (x86)\Steam\...\Cyberpunk 2077</code>），
+		装在别处的话，改脚本开头那行 <code>$GameDir</code> 就行。
 	</div>
 
 	<div class="foot">
