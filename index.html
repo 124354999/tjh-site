@@ -141,6 +141,39 @@
 	.work p a{color:var(--yellow); text-decoration:none; border-bottom:1px dashed rgba(255,42,85,.55); white-space:nowrap}
 	.work p a:hover{color:var(--cyan); border-bottom-color:var(--cyan)}
 
+	/* 游戏卡弹窗 */
+	#now .card{cursor:pointer; position:relative}
+	#now .card::after{
+		content:"点开看看 →"; position:absolute; right:18px; bottom:14px;
+		font-size:.72em; letter-spacing:.12em; color:var(--dim); opacity:0; transition:opacity .2s;
+	}
+	#now .card:hover::after{opacity:1}
+	#now .card .detail{display:none}
+	.gmodal{
+		position:fixed; inset:0; z-index:1000; display:none;
+		background:rgba(4,5,10,.82); backdrop-filter:blur(4px);
+		padding:24px; overflow-y:auto;
+	}
+	.gmodal.open{display:flex; align-items:center; justify-content:center}
+	.gmodal-box{
+		background:linear-gradient(160deg,#0d1120,#141a2e); border:1px solid var(--line);
+		border-radius:6px; max-width:560px; width:100%; padding:28px 26px;
+		box-shadow:0 20px 60px rgba(0,0,0,.6); position:relative;
+	}
+	.gmodal-box h3{margin:0 0 6px; font-size:1.35rem; letter-spacing:.02em}
+	.gmodal-box .gtag{font-size:.7em; letter-spacing:.24em; color:var(--cyan); display:block; margin-bottom:14px}
+	.gmodal-box .grow{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px}
+	.gmodal-box .gpill{
+		font-size:.78em; color:var(--dim); border:1px solid rgba(255,255,255,.14);
+		border-radius:999px; padding:4px 12px;
+	}
+	.gmodal-box p{margin:0; color:#c8d2e0; line-height:2; font-size:.95em}
+	.gmodal-close{
+		position:absolute; top:14px; right:16px; background:none; border:0; cursor:pointer;
+		color:var(--dim); font-size:1.4rem; line-height:1; padding:4px 8px;
+	}
+	.gmodal-close:hover{color:var(--yellow)}
+
 	/* 页脚 */
 	footer{
 		border-top:1px solid var(--line); padding:28px 8vw; text-align:center;
@@ -294,22 +327,53 @@
 				<span class="num">TACTICAL · PC</span>
 				<h3>暗区突围：无限</h3>
 				<p>端游版偶尔玩一下，里面六套有点逆天，对护甲最尊重的游戏</p>
+			
+				<div class="detail">
+					<span class="gtag">TACTICAL EXTRACTION · PC</span>
+					<div class="grow"><span class="gpill">平台：PC</span><span class="gpill">主要玩这个</span><span class="gpill">喜欢：卡点、撤离</span></div>
+					<p>端游是我花时间最多的。进图先听脚步，再决定走哪条路，一局下来脑子比手更累。
+					最爽的是残血撤离成功那一下，最气的是刚捡到好东西就被人蹲了。
+					装备带多了怕丢、带少了打不过，这个纠结就是它的乐趣。</p>
+				</div>
 			</div>
 			<div class="card">
 				<span class="num">TACTICAL · MOBILE</span>
 				<h3>暗区突围（手游）</h3>
 				<p>手游才是我的家，每次玩起来，脸都红红的，心跳加快，那种肾上腺素飙升的感觉，如此美哉</p>
+			
+				<div class="detail">
+					<span class="gtag">TACTICAL EXTRACTION · MOBILE</span>
+					<div class="grow"><span class="gpill">平台：手机</span><span class="gpill">出门时玩</span><span class="gpill">地图更小，节奏更快</span></div>
+					<p>主要在没法开电脑的时候玩。地图小、局时短，一局十几分钟就能收工。
+					手机上瞄准不如键鼠，所以我更愿意蹲点听脚步，等别人先动。
+					玩起来比端游随意，但该紧张的时候一样紧张。</p>
+				</div>
 			</div>
 			<div class="card">
 				<span class="num">RPG</span>
 				<h3>赛博朋克 2077</h3>
 				<p>装了 RED4ext、CET、ArchiveXL 一整套框架，正在往里加车辆和武器模组。
 				玩模组的时间比玩游戏长。各位V震天，早上好</p>
+			
+				<div class="detail">
+					<span class="gtag">OPEN WORLD RPG · PC</span>
+					<div class="grow"><span class="gpill">平台：Steam</span><span class="gpill">装了整套模组框架</span><span class="gpill">RED4ext / CET / ArchiveXL</span></div>
+					<p>游戏本身玩得不算多，改它的时间更长。装了 RED4ext、CET、ArchiveXL、TweakXL 这一整套，
+					然后是车辆、武器、外观模组，一边装一边排查崩溃。
+					夜之城好看的地方在于，你随便走进一条巷子都有人在那儿活着。</p>
+				</div>
 			</div>
 			<div class="card">
 				<span class="num">FPS</span>
 				<h3>CS2</h3>
 				<p>嘘，露头就秒，不服上完美</p>
+			
+				<div class="detail">
+					<span class="gtag">FPS · PC</span>
+					<div class="grow"><span class="gpill">平台：Steam</span><span class="gpill">水平一般</span><span class="gpill">图个乐</span></div>
+					<p>打得不算好，偶尔手感来了能连拿几个。喜欢的位置是步枪，
+					但经常因为压枪不稳被打回去。输了就说自己在测试网络延迟。</p>
+				</div>
 			</div>
 			</div>
 	</section>
@@ -470,6 +534,49 @@
 					btn.classList.remove('liked');
 				})
 				.finally(function () { btn.disabled = false; });
+		});
+	})();
+	</script>
+
+	<!-- 游戏详情弹窗 -->
+	<div class="gmodal" id="gmodal">
+		<div class="gmodal-box">
+			<button class="gmodal-close" id="gmodalClose" aria-label="关闭">×</button>
+			<h3 id="gmodalTitle"></h3>
+			<div id="gmodalBody"></div>
+		</div>
+	</div>
+
+	<script>
+	(function () {
+		var modal = document.getElementById('gmodal');
+		if (!modal) return;
+		var titleEl = document.getElementById('gmodalTitle');
+		var bodyEl = document.getElementById('gmodalBody');
+		var closeBtn = document.getElementById('gmodalClose');
+
+		function open(card) {
+			var t = card.querySelector('h3');
+			var d = card.querySelector('.detail');
+			if (!d) return;
+			titleEl.textContent = t ? t.textContent : '';
+			bodyEl.innerHTML = d.innerHTML;
+			modal.classList.add('open');
+			document.body.style.overflow = 'hidden';
+		}
+		function close() {
+			modal.classList.remove('open');
+			document.body.style.overflow = '';
+		}
+		document.querySelectorAll('#now .card').forEach(function (card) {
+			card.addEventListener('click', function () { open(card); });
+		});
+		closeBtn.addEventListener('click', close);
+		modal.addEventListener('click', function (e) {
+			if (e.target === modal) close();
+		});
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') close();
 		});
 	})();
 	</script>
